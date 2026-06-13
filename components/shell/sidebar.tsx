@@ -1,9 +1,10 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/icon';
 import { Avatar } from '@/components/ui/avatar';
 import { PROFESSIONAL } from '@/lib/mock-data';
+import { createClient } from '@/lib/supabase/client';
 
 const NAV = [
   { href: '/dashboard',         icon: 'home',     label: 'Dashboard' },
@@ -19,7 +20,15 @@ const NAV_BOTTOM = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  }
 
   return (
     <aside style={{
@@ -87,6 +96,13 @@ export function Sidebar() {
             <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{PROFESSIONAL.firstName}</div>
             <div style={{ fontSize: 'var(--text-xs)', color: 'var(--sidebar-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{PROFESSIONAL.specialty}</div>
           </div>
+          <button
+            onClick={handleLogout}
+            title="Cerrar sesión"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--sidebar-text)', padding: 4, borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+          >
+            <Icon name="logout" size={16} />
+          </button>
         </div>
       </div>
     </aside>

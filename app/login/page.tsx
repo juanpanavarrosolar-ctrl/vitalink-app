@@ -1,20 +1,30 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { createClient } from '@/lib/supabase/client';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleLogin() {
     setLoading(true);
-    // TODO: Replace with Supabase auth in Fase 3
-    // const { error } = await supabase.auth.signInWithPassword({ email, password })
-    // if (!error) router.push('/dashboard')
-    setTimeout(() => setLoading(false), 1000);
+    setError('');
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setError('Email o contraseña incorrectos.');
+      setLoading(false);
+    } else {
+      router.push('/dashboard');
+      router.refresh();
+    }
   }
 
   return (
@@ -37,6 +47,12 @@ export default function LoginPage() {
           <Input label="Email" type="email" placeholder="tu@email.cl" value={email} onChange={setEmail} icon="mail" />
           <Input label="Contraseña" type="password" placeholder="••••••••" value={password} onChange={setPassword} icon="shield" />
         </div>
+
+        {error && (
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-danger)', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 'var(--radius-md)', padding: '10px 12px', marginTop: 'var(--sp-2)' }}>
+            {error}
+          </p>
+        )}
 
         <Button
           onClick={handleLogin}

@@ -6,8 +6,9 @@ import type { BadgeColor } from '@/lib/types';
 const ITEM_COLOR: Record<string, BadgeColor> = { active: 'emerald', warning: 'amber', expired: 'red' };
 const ITEM_LABEL: Record<string, string> = { active: 'Activo', warning: 'Por renovar', expired: 'Vencido' };
 
-export default function PatientProtocolPage({ params }: { params: { token: string } }) {
-  const protocol = PROTOCOLS.find(p => p.shortToken === params.token);
+export default async function PatientProtocolPage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = await params;
+  const protocol = PROTOCOLS.find(p => p.shortToken === token);
 
   if (!protocol) {
     return (
