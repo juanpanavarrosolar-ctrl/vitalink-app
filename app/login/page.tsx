@@ -17,12 +17,14 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError('Email o contraseña incorrectos.');
       setLoading(false);
     } else {
-      router.push('/dashboard');
+      const role = data.user?.user_metadata?.role;
+      const dest = role === 'admin' ? '/admin/dashboard' : role === 'patient' ? '/patient/dashboard' : '/dashboard';
+      router.push(dest);
       router.refresh();
     }
   }
