@@ -20,7 +20,7 @@ export default function DashboardPage() {
   return (
     <div style={{ padding: 'var(--sp-8)', maxWidth: 1200, margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ marginBottom: 'var(--sp-8)' }}>
+      <div style={{ marginBottom: 'var(--sp-8)', animation: 'fadeInDown var(--duration-enter) var(--ease-out) both' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>
           Buenos días, {PROFESSIONAL.firstName} 👋
         </h1>
@@ -31,19 +31,19 @@ export default function DashboardPage() {
 
       {/* Metrics */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--sp-4)', marginBottom: 'var(--sp-6)' }}>
-        {METRIC_CARDS.map(m => (
-          <div key={m.label} style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', padding: 'var(--sp-5)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)' }}>
+        {METRIC_CARDS.map((m, i) => (
+          <div key={m.label} style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', padding: 'var(--sp-5)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)', animation: `fadeInDown var(--duration-enter) var(--ease-out) ${i * 60}ms both` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-2)' }}>
               <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', fontWeight: 500 }}>{m.label}</span>
               <Icon name={m.trend === 'up' ? 'trendUp' : m.trend === 'alert' ? 'bell' : 'arrowDown'} size={16} style={{ color: m.color }} />
             </div>
-            <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>{m.value}</div>
+            <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>{m.value}</div>
             <div style={{ fontSize: 'var(--text-xs)', color: m.trend === 'down' ? 'var(--color-warning)' : m.trend === 'alert' ? 'var(--color-error)' : 'var(--color-success)', marginTop: 4, fontWeight: 500 }}>{m.change}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 'var(--sp-6)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 'var(--sp-6)', animation: 'fadeInDown var(--duration-enter) var(--ease-out) 240ms both' }}>
         {/* Left column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
 
@@ -71,7 +71,7 @@ export default function DashboardPage() {
                       <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>Health score</div>
                     </div>
                     <div style={{ textAlign: 'right', minWidth: 80 }}>
-                      <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>{formatCLP(prot.monthlyValue)}</div>
+                      <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{formatCLP(prot.monthlyValue)}</div>
                       <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>/ mes</div>
                     </div>
                   </div>
@@ -96,7 +96,7 @@ export default function DashboardPage() {
                   <Icon name={item.icon} size={18} style={{ color: item.color, marginBottom: 8 }} />
                   <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', fontWeight: 500 }}>{item.label}</div>
                   {item.value !== null && <div style={{ fontSize: 'var(--text-xl)', fontWeight: 800, color: 'var(--color-text)', marginTop: 2 }}>{item.value}</div>}
-                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: item.color }}>{formatCLP(item.amount)}</div>
+                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: item.color, fontVariantNumeric: 'tabular-nums' }}>{formatCLP(item.amount)}</div>
                 </div>
               ))}
             </div>

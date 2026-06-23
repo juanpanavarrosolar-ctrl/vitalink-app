@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { PATIENTS, PRODUCTS, PROTOCOLS, PROFESSIONAL } from '@/lib/mock-data';
 
 const STATS = [
-  { label: 'Profesionales', value: '3', sub: '2 verificados', icon: 'users', color: '#6366f1', bg: 'rgba(99,102,241,0.08)' },
+  { label: 'Profesionales', value: '3', sub: '2 verificados', icon: 'users', color: 'var(--teal-600)', bg: 'rgba(8,145,178,0.08)' },
   { label: 'Pacientes activos', value: String(PATIENTS.filter(p => p.status === 'active').length), sub: `${PATIENTS.length} total`, icon: 'heart', color: 'var(--color-primary)', bg: 'var(--color-primary-light)' },
   { label: 'Productos catálogo', value: String(PRODUCTS.length), sub: '4 por aprobar', icon: 'package', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
   { label: 'Planes activos', value: String(PROTOCOLS.filter(p => p.status === 'active').length), sub: 'este mes', icon: 'fileText', color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
@@ -34,28 +34,28 @@ export default function AdminDashboardPage() {
     <div style={{ padding: 'var(--sp-8)', maxWidth: 1200, margin: '0 auto' }}>
 
       {/* Header */}
-      <div style={{ marginBottom: 'var(--sp-8)' }}>
+      <div style={{ marginBottom: 'var(--sp-8)', animation: 'fadeInDown var(--duration-enter) var(--ease-out) both' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 4 }}>Panel de Administración</h1>
         <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>Resumen de la plataforma NutriLink</p>
       </div>
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--sp-4)', marginBottom: 'var(--sp-6)' }}>
-        {STATS.map(s => (
-          <div key={s.label} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--sp-5)' }}>
+        {STATS.map((s, i) => (
+          <div key={s.label} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--sp-5)', animation: `fadeInDown var(--duration-enter) var(--ease-out) ${i * 60}ms both` }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
               <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', fontWeight: 500 }}>{s.label}</span>
               <div style={{ width: 34, height: 34, borderRadius: 'var(--radius-md)', background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Icon name={s.icon} size={16} style={{ color: s.color }} />
               </div>
             </div>
-            <div style={{ fontSize: 'var(--text-3xl)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--color-text)', marginBottom: 2 }}>{s.value}</div>
+            <div style={{ fontSize: 'var(--text-3xl)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--color-text)', marginBottom: 2, fontVariantNumeric: 'tabular-nums' }}>{s.value}</div>
             <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>{s.sub}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--sp-6)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--sp-6)', animation: 'fadeInDown var(--duration-enter) var(--ease-out) 240ms both' }}>
 
         {/* Professionals table */}
         <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
@@ -98,8 +98,8 @@ export default function AdminDashboardPage() {
           <div style={{ padding: 'var(--sp-2)' }}>
             {ACTIVITY.map((a, i) => (
               <div key={i} style={{ display: 'flex', gap: 'var(--sp-3)', padding: 'var(--sp-3)', borderRadius: 'var(--radius-md)' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(99,102,241,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon name={a.icon} size={15} style={{ color: '#6366f1' }} />
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(8,145,178,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon name={a.icon} size={15} style={{ color: 'var(--teal-600)' }} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 'var(--text-xs)', lineHeight: 1.4, fontWeight: 500 }}>{a.msg}</div>

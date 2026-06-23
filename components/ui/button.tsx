@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useReducer } from 'react';
 import { Icon } from './icon';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
@@ -12,10 +12,12 @@ interface ButtonProps {
   icon?: string;
   iconRight?: string;
   disabled?: boolean;
+  loading?: boolean;
   onClick?: () => void;
   style?: React.CSSProperties;
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  'aria-label'?: string;
 }
 
 const variantStyles: Record<Variant, React.CSSProperties> = {
@@ -45,19 +47,24 @@ const iconSize: Record<Size, number> = { xs: 14, sm: 15, md: 16, lg: 16 };
 
 export function Button({
   children, variant = 'primary', size = 'md', icon, iconRight,
-  disabled, onClick, style: extra = {}, className = '', type = 'button',
+  disabled, loading, onClick, style: extra = {}, className = '', type = 'button',
+  'aria-label': ariaLabel,
 }: ButtonProps) {
   const [hover, setHover] = useState(false);
+  const [pressed, setPressed] = useState(false);
+  const isDisabled = disabled || loading;
 
   const s: React.CSSProperties = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
     fontFamily: 'var(--font-sans)', fontWeight: 600, borderRadius: 'var(--radius-md)',
-    transition: 'all var(--duration-fast) var(--ease-in-out)', cursor: disabled ? 'default' : 'pointer',
+    transition: `all var(--duration-fast) var(--ease-in-out)`,
+    cursor: isDisabled ? 'not-allowed' : 'pointer',
     border: 'none', whiteSpace: 'nowrap', lineHeight: 1,
-    opacity: disabled ? 0.5 : 1,
-    transform: hover && !disabled ? 'translateY(-1px)' : 'none',
+    opacity: isDisabled ? 0.55 : 1,
+    transform: pressed && !isDisabled ? 'scale(0.97)' : hover && !isDisabled ? 'translateY(-1px)' : 'none',
+    boxShadow: hover && !isDisabled && variant === 'primary' ? 'var(--shadow-md)' : 'none',
     ...variantStyles[variant],
-    ...(hover && !disabled ? hoverStyles[variant] : {}),
+    ...(hover && !isDisabled ? hoverStyles[variant] : {}),
     ...sizeStyles[size],
     ...extra,
   };
@@ -67,14 +74,26 @@ export function Button({
       type={type}
       style={s}
       className={className}
-      onClick={disabled ? undefined : onClick}
+      onClick={isDisabled ? undefined : onClick}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      disabled={disabled}
+      onMouseLeave={() => { setHover(false); setPressed(false); }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      disabled={isDisabled}
+      aria-label={ariaLabel}
+      aria-busy={loading}
     >
-      {icon && <Icon name={icon} size={iconSize[size]} />}
+      {loading ? (
+        <span style={{
+          width: iconSize[size], height: iconSize[size],
+          border: '2px solid currentColor', borderTopColor: 'transparent',
+          borderRadius: '50%', animation: 'spin 0.7s linear infinite', flexShrink: 0,
+        }} aria-hidden="true" />
+      ) : icon ? (
+        <Icon name={icon} size={iconSize[size]} aria-hidden="true" />
+      ) : null}
       {children}
-      {iconRight && <Icon name={iconRight} size={iconSize[size]} />}
+      {!loading && iconRight && <Icon name={iconRight} size={iconSize[size]} aria-hidden="true" />}
     </button>
   );
 }

@@ -44,12 +44,15 @@ interface IconProps {
   strokeWidth?: number;
   className?: string;
   style?: React.CSSProperties;
+  'aria-label'?: string;
+  'aria-hidden'?: boolean | 'true' | 'false';
 }
 
-export function Icon({ name, size = 20, strokeWidth = 1.5, className = '', style }: IconProps) {
+export function Icon({ name, size = 20, strokeWidth = 1.5, className = '', style, 'aria-label': ariaLabel, 'aria-hidden': ariaHidden }: IconProps) {
   const d = PATHS[name];
   if (!d) return null;
   const paths = d.split(' M').map((p, i) => (i === 0 ? p : 'M' + p));
+  const hidden: boolean | undefined = ariaHidden === true || ariaHidden === 'true' ? true : ariaLabel ? false : true;
   return (
     <svg
       width={size}
@@ -62,6 +65,9 @@ export function Icon({ name, size = 20, strokeWidth = 1.5, className = '', style
       strokeLinejoin="round"
       className={className}
       style={style}
+      aria-label={ariaLabel}
+      aria-hidden={hidden}
+      role={ariaLabel ? 'img' : undefined}
     >
       {paths.map((path, i) => <path key={i} d={path} />)}
     </svg>

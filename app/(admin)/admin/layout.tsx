@@ -33,12 +33,12 @@ function AdminSidebar() {
       {/* Logo */}
       <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Icon name="shield" size={18} style={{ color: '#fff' }} />
           </div>
           <div>
             <div style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>NutriLink</div>
-            <div style={{ fontSize: 11, color: '#6366f1', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Admin</div>
+            <div style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Admin</div>
           </div>
         </div>
       </div>
@@ -53,8 +53,8 @@ function AdminSidebar() {
               borderRadius: 8, fontSize: 14, fontWeight: active ? 600 : 500,
               textDecoration: 'none', transition: 'all 0.15s ease',
               color: active ? '#fff' : 'rgba(255,255,255,0.5)',
-              background: active ? 'rgba(99,102,241,0.15)' : 'transparent',
-              borderLeft: active ? '2px solid #6366f1' : '2px solid transparent',
+              background: active ? 'rgba(5,150,105,0.15)' : 'transparent',
+              borderLeft: active ? '2px solid var(--color-primary)' : '2px solid transparent',
             }}>
               <Icon name={item.icon} size={18} />
               {item.label}
@@ -66,7 +66,7 @@ function AdminSidebar() {
       {/* Bottom */}
       <div style={{ padding: '12px 10px 16px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>AD</span>
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>

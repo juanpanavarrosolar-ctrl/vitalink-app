@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   return (
     <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
-      <div style={{ width: 400, background: 'var(--color-surface)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', padding: 'var(--sp-8)', boxShadow: 'var(--shadow-lg)' }}>
+      <div style={{ width: 400, background: 'var(--color-surface)', borderRadius: 'var(--radius-xl)', border: '1px solid var(--color-border)', padding: 'var(--sp-8)', boxShadow: 'var(--shadow-lg)', animation: 'fadeInUp var(--duration-enter) var(--ease-out) both' }}>
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 'var(--sp-8)' }}>
           <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -58,7 +58,8 @@ export default function LoginPage() {
 
         <Button
           onClick={handleLogin}
-          disabled={loading || !email || !password}
+          disabled={!email || !password}
+          loading={loading}
           style={{ width: '100%', marginTop: 'var(--sp-6)', justifyContent: 'center' }}
         >
           {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
