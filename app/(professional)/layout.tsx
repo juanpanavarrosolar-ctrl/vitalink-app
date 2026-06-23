@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Sidebar } from '@/components/shell/sidebar';
+import { NutriCoachWidget } from '@/components/ai/nutricoach-widget';
 
 function getFirstName(fullName: string): string {
   const parts = fullName.split(' ');
@@ -36,6 +37,7 @@ export default async function ProfessionalLayout({ children }: { children: React
       <main style={{ flex: 1, overflowY: 'auto', background: 'var(--color-bg)' }}>
         {children}
       </main>
+      <NutriCoachWidget />
     </div>
   );
 }

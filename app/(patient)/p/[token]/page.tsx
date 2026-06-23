@@ -4,6 +4,7 @@ import { Icon } from '@/components/ui/icon';
 import { Badge } from '@/components/ui/badge';
 import { DisclaimerModal } from '@/components/patient/disclaimer-modal';
 import { CheckoutButton } from '@/components/patient/checkout-button';
+import { NutriGuiaWidget } from '@/components/ai/nutriguia-widget';
 import { formatCLP } from '@/lib/utils';
 
 function serviceRole() {
@@ -184,6 +185,7 @@ export default async function PatientProtocolPage({ params }: { params: Promise<
 
         </div>
       </div>
+      <NutriGuiaWidget planToken={token} />
     </>
   );
 }
