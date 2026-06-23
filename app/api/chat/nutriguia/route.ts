@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
 
     if (!messages?.length) return new Response('messages required', { status: 400 });
 
+    const lastMsg = messages[messages.length - 1];
+    if ((lastMsg?.content?.length ?? 0) > 1000) return new Response('Mensaje demasiado largo', { status: 400 });
+    if (messages.length > 50) return new Response('Historial demasiado largo', { status: 400 });
+
     let contextSuffix = '';
     if (planToken) {
       const supabase = serviceRole();

@@ -14,7 +14,6 @@ type Product = {
   dosage: string | null;
   unit_count: number | null;
   price: number;
-  wholesale_cost: number | null;
   stock_status: string;
   claim_review_status: string;
   description_safe: string | null;

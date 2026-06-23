@@ -28,7 +28,7 @@ export async function initiateCheckout(input: CheckoutInput) {
   const { data: plan, error } = await supabase
     .from('plans')
     .select(`
-      id, title, status, professional_id,
+      id, title, status, professional_id, patient_id,
       professionals ( discount_mode, discount_value ),
       plan_items (
         id, quantity,
@@ -59,6 +59,7 @@ export async function initiateCheckout(input: CheckoutInput) {
     .insert({
       plan_id: plan.id,
       professional_id: plan.professional_id,
+      patient_id: (plan as any).patient_id,
       status: 'pending_payment',
       subtotal,
       commission_pct: commissionPct,

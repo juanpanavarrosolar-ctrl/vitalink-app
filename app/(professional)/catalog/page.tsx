@@ -6,7 +6,7 @@ export default async function CatalogPage() {
 
   const { data: products } = await supabase
     .from('products')
-    .select('id, name, brand, compound, format, dosage, unit_count, price, wholesale_cost, stock_status, claim_review_status, description_safe')
+    .select('id, name, brand, compound, format, dosage, unit_count, price, stock_status, claim_review_status, description_safe')
     .eq('stock_status', 'active')
     .order('name');
 
