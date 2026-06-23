@@ -1,84 +1,116 @@
+import { createClient } from '@/lib/supabase/server';
 import { Icon } from '@/components/ui/icon';
-import { FINANCE, formatCLP } from '@/lib/mock-data';
+import { Badge } from '@/components/ui/badge';
+import { formatCLP, formatDate } from '@/lib/utils';
+import type { BadgeColor } from '@/lib/types';
 
-export default function FinancePage() {
+const ORDER_COLOR: Record<string, BadgeColor> = {
+  pending_payment: 'amber', paid: 'emerald', preparing: 'blue',
+  shipped: 'violet', delivered: 'emerald', cancelled: 'red',
+  refunded: 'slate', failed: 'red',
+};
+const ORDER_LABEL: Record<string, string> = {
+  pending_payment: 'Pago pendiente', paid: 'Pagado', preparing: 'Preparando',
+  shipped: 'Enviado', delivered: 'Entregado', cancelled: 'Cancelado',
+  refunded: 'Reembolsado', failed: 'Fallido',
+};
+
+export default async function FinancePage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: professional } = await supabase
+    .from('professionals')
+    .select('id')
+    .eq('user_id', user!.id)
+    .single();
+
+  const { data: orders } = professional
+    ? await supabase
+        .from('orders')
+        .select('id, status, subtotal, total, commission_pct, commission_amt, patient_name, created_at, paid_at, plans(title)')
+        .eq('professional_id', professional.id)
+        .order('created_at', { ascending: false })
+        .limit(50)
+    : { data: [] };
+
+  const safeOrders = orders ?? [];
+  const paidOrders = safeOrders.filter(o => o.status === 'paid' || o.status === 'delivered' || o.status === 'shipped' || o.status === 'preparing');
+  const totalRevenue = paidOrders.reduce((s, o) => s + (o.total ?? 0), 0);
+  const totalCommissions = paidOrders.reduce((s, o) => s + (o.commission_amt ?? 0), 0);
+  const pendingOrders = safeOrders.filter(o => o.status === 'pending_payment').length;
+
   const metrics = [
-    { label: 'MRR', value: formatCLP(FINANCE.mrr.value), change: `+${FINANCE.mrr.change}%`, icon: 'trendUp', color: 'var(--color-primary)' },
-    { label: 'GMV del mes', value: formatCLP(FINANCE.gmv.value), change: `+${FINANCE.gmv.change}%`, icon: 'barChart', color: 'var(--blue-600)' },
-    { label: 'Comisiones', value: formatCLP(FINANCE.commissions.value), change: `+${FINANCE.commissions.change}%`, icon: 'star', color: 'var(--violet-600)' },
-    { label: 'Total generado', value: formatCLP(FINANCE.totalGenerated.value), change: 'acumulado', icon: 'heart', color: 'var(--amber-600)' },
+    { label: 'Total generado', value: formatCLP(totalRevenue), icon: 'trendUp', color: 'var(--color-primary)', sub: `${paidOrders.length} órdenes pagadas` },
+    { label: 'Comisiones', value: formatCLP(totalCommissions), icon: 'star', color: 'var(--violet-600)', sub: 'Acumulado' },
+    { label: 'Órdenes totales', value: String(safeOrders.length), icon: 'barChart', color: 'var(--blue-600)', sub: `${pendingOrders} pendientes` },
   ];
-
-  const maxVal = Math.max(...FINANCE.monthlyData);
 
   return (
     <div style={{ padding: 'var(--sp-8)', maxWidth: 1100, margin: '0 auto' }}>
-      <div style={{ marginBottom: 'var(--sp-8)' }}>
+      <div style={{ marginBottom: 'var(--sp-8)', animation: 'fadeInDown var(--duration-enter) var(--ease-out) both' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>Finanzas</h1>
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', marginTop: 4 }}>Resumen de métricas financieras</p>
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', marginTop: 4 }}>Historial de órdenes y comisiones</p>
       </div>
 
-      {/* Metrics grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--sp-4)', marginBottom: 'var(--sp-6)' }}>
-        {metrics.map(m => (
-          <div key={m.label} style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', padding: 'var(--sp-5)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)' }}>
+      {/* Metrics */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--sp-4)', marginBottom: 'var(--sp-6)' }}>
+        {metrics.map((m, i) => (
+          <div key={m.label} style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', padding: 'var(--sp-5)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)', animation: `fadeInDown var(--duration-enter) var(--ease-out) ${i * 60}ms both` }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
               <span style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', fontWeight: 500 }}>{m.label}</span>
-              <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Icon name={m.icon} size={16} style={{ color: m.color }} />
-              </div>
+              <Icon name={m.icon} size={18} style={{ color: m.color }} />
             </div>
-            <div style={{ fontSize: 'var(--text-xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>{m.value}</div>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-success)', fontWeight: 500, marginTop: 4 }}>{m.change}</div>
+            <div style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, color: 'var(--color-text)', fontVariantNumeric: 'tabular-nums' }}>{m.value}</div>
+            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', marginTop: 4 }}>{m.sub}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 'var(--sp-6)' }}>
-        {/* MRR chart */}
-        <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)', padding: 'var(--sp-5)' }}>
-          <h2 style={{ fontSize: 'var(--text-md)', fontWeight: 700, marginBottom: 'var(--sp-5)' }}>Evolución MRR</h2>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, height: 160 }}>
-            {FINANCE.monthlyData.map((val, i) => (
-              <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: '100%', background: i === FINANCE.monthlyData.length - 1 ? 'var(--color-primary)' : 'var(--color-primary-subtle)', borderRadius: 'var(--radius-sm) var(--radius-sm) 0 0', height: `${(val / maxVal) * 140}px`, transition: 'height 0.3s' }} />
-                <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)' }}>{FINANCE.monthLabels[i]}</span>
+      {/* Orders table */}
+      <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)', overflow: 'hidden', animation: 'fadeInDown var(--duration-enter) var(--ease-out) 180ms both' }}>
+        <div style={{ padding: 'var(--sp-4) var(--sp-5)', borderBottom: '1px solid var(--color-border)', fontWeight: 700 }}>
+          Historial de órdenes
+        </div>
+        {safeOrders.length === 0 ? (
+          <div style={{ padding: 'var(--sp-10)', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+            <Icon name="barChart" size={32} style={{ margin: '0 auto var(--sp-3)', color: 'var(--color-text-tertiary)' }} />
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Sin órdenes aún</div>
+            <p style={{ fontSize: 'var(--text-sm)' }}>Las órdenes aparecerán aquí cuando los pacientes compren sus protocolos.</p>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr 1fr 1fr auto', gap: 'var(--sp-4)', padding: 'var(--sp-3) var(--sp-5)', background: 'var(--color-bg)', borderBottom: '1px solid var(--color-border)', fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span>Protocolo / Paciente</span>
+              <span>Fecha</span>
+              <span>Estado</span>
+              <span>Comisión</span>
+              <span>Total</span>
+              <span></span>
+            </div>
+            {safeOrders.map((order, i) => (
+              <div key={order.id} style={{ display: 'grid', gridTemplateColumns: '2fr 1.5fr 1fr 1fr 1fr auto', gap: 'var(--sp-4)', padding: 'var(--sp-4) var(--sp-5)', borderBottom: i < safeOrders.length - 1 ? '1px solid var(--color-border-subtle)' : 'none', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600 }}>{(order.plans as any)?.title ?? 'Protocolo'}</div>
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)' }}>{order.patient_name ?? 'Paciente'}</div>
+                </div>
+                <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+                  {formatDate(order.created_at)}
+                </div>
+                <Badge color={ORDER_COLOR[order.status] ?? 'slate'}>
+                  {ORDER_LABEL[order.status] ?? order.status}
+                </Badge>
+                <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--violet-600)', fontVariantNumeric: 'tabular-nums' }}>
+                  {order.commission_amt ? formatCLP(order.commission_amt) : `${order.commission_pct ?? 15}%`}
+                </div>
+                <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+                  {formatCLP(order.total ?? 0)}
+                </div>
+                <div />
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Key metrics */}
-        <div style={{ background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)', padding: 'var(--sp-5)' }}>
-          <h2 style={{ fontSize: 'var(--text-md)', fontWeight: 700, marginBottom: 'var(--sp-4)' }}>Métricas clave</h2>
-          {[
-            { label: 'LTV promedio', value: formatCLP(FINANCE.ltvAvg), icon: 'heart' },
-            { label: 'Pacientes suscritos', value: `${FINANCE.subscribed}`, icon: 'refresh' },
-            { label: 'Tasa de recompra', value: `${FINANCE.reorderRate}%`, icon: 'trendUp', sub: 'vs 45% industria' },
-          ].map(item => (
-            <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--sp-3) 0', borderBottom: '1px solid var(--color-border-subtle)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 'var(--radius-sm)', background: 'var(--color-primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name={item.icon} size={16} style={{ color: 'var(--color-primary)' }} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>{item.label}</div>
-                  {item.sub && <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>{item.sub}</div>}
-                </div>
-              </div>
-              <div style={{ fontSize: 'var(--text-base)', fontWeight: 700 }}>{item.value}</div>
-            </div>
-          ))}
-
-          {/* Projections */}
-          <div style={{ marginTop: 'var(--sp-4)', padding: 'var(--sp-4)', background: 'var(--color-primary-light)', borderRadius: 'var(--radius-md)' }}>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-primary)', fontWeight: 600, marginBottom: 4 }}>Próximos 7 días</div>
-            <div style={{ fontSize: 'var(--text-xl)', fontWeight: 800, color: 'var(--color-primary)' }}>{formatCLP(FINANCE.projectedNext.total)}</div>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', marginTop: 2 }}>
-              {FINANCE.projectedNext.renewals} renovaciones + {FINANCE.projectedNext.newProtocols} nuevos
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

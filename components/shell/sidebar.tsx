@@ -3,25 +3,37 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from '@/components/ui/icon';
 import { Avatar } from '@/components/ui/avatar';
-import { PROFESSIONAL } from '@/lib/mock-data';
 import { createClient } from '@/lib/supabase/client';
 
+export interface SidebarProfessional {
+  name: string;
+  firstName: string;
+  specialty: string;
+}
+
 const NAV = [
-  { href: '/dashboard',         icon: 'home',     label: 'Dashboard' },
-  { href: '/protocols',         icon: 'fileText',  label: 'Protocolos' },
-  { href: '/patients',          icon: 'users',     label: 'Pacientes' },
-  { href: '/catalog',           icon: 'package',   label: 'Catálogo' },
-  { href: '/finance',           icon: 'barChart',  label: 'Finanzas' },
+  { href: '/dashboard',  icon: 'home',     label: 'Dashboard' },
+  { href: '/protocols',  icon: 'fileText', label: 'Protocolos' },
+  { href: '/patients',   icon: 'users',    label: 'Pacientes' },
+  { href: '/catalog',    icon: 'package',  label: 'Catálogo' },
+  { href: '/finance',    icon: 'barChart', label: 'Finanzas' },
 ];
 
 const NAV_BOTTOM = [
-  { href: '/settings',          icon: 'settings',  label: 'Ajustes' },
+  { href: '/settings',   icon: 'settings', label: 'Ajustes' },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  professional?: SidebarProfessional;
+}
+
+export function Sidebar({ professional }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
+
+  const displayName = professional?.firstName ?? professional?.name?.split(' ')[0] ?? '—';
+  const displaySpecialty = professional?.specialty ?? 'Nutricionista';
 
   async function handleLogout() {
     const supabase = createClient();
@@ -91,10 +103,10 @@ export function Sidebar() {
 
         {/* Professional profile */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', marginTop: 4 }}>
-          <Avatar name={PROFESSIONAL.name} size={32} />
+          <Avatar name={professional?.name ?? displayName} size={32} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{PROFESSIONAL.firstName}</div>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--sidebar-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{PROFESSIONAL.specialty}</div>
+            <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</div>
+            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--sidebar-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displaySpecialty}</div>
           </div>
           <button
             onClick={handleLogout}

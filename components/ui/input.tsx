@@ -10,9 +10,16 @@ interface InputProps {
   icon?: string;
   type?: string;
   style?: React.CSSProperties;
+  name?: string;
+  required?: boolean;
+  autoFocus?: boolean;
+  min?: string | number;
+  max?: string | number;
+  defaultValue?: string;
+  readOnly?: boolean;
 }
 
-export function Input({ label, placeholder, value, onChange, icon, type = 'text', style: extra }: InputProps) {
+export function Input({ label, placeholder, value, onChange, icon, type = 'text', style: extra, name, required, autoFocus, min, max, defaultValue, readOnly }: InputProps) {
   const [focused, setFocused] = useState(false);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -28,11 +35,18 @@ export function Input({ label, placeholder, value, onChange, icon, type = 'text'
         {icon && <Icon name={icon} size={18} style={{ color: 'var(--color-text-tertiary)', flexShrink: 0 }} />}
         <input
           type={type}
+          name={name}
           placeholder={placeholder}
-          value={value ?? ''}
+          value={value}
+          defaultValue={defaultValue}
           onChange={e => onChange?.(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
+          required={required}
+          autoFocus={autoFocus}
+          min={min}
+          max={max}
+          readOnly={readOnly}
           style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', fontFamily: 'var(--font-sans)', color: 'var(--color-text)', width: '100%' }}
         />
       </div>
