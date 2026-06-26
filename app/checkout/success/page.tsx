@@ -2,25 +2,22 @@ import { createClient } from '@supabase/supabase-js';
 import { Icon } from '@/components/ui/icon';
 import { formatCLP, formatDate } from '@/lib/utils';
 
-function serviceRole() {
+// Anon client — get_order_summary RPC corre con SECURITY DEFINER
+function anonClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 }
 
 export default async function CheckoutSuccessPage({ searchParams }: { searchParams: Promise<{ order?: string }> }) {
   const { order: orderId } = await searchParams;
-  const supabase = serviceRole();
+  const supabase = anonClient();
 
-  const { data: order } = orderId
-    ? await supabase
-        .from('orders')
-        .select('id, status, total, patient_name, patient_email, paid_at, plans(title)')
-        .eq('id', orderId)
-        .single()
-    : { data: null };
+  const order = orderId
+    ? await supabase.rpc('get_order_summary', { p_order_id: orderId }).then(r => r.data)
+    : null;
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--sp-6)' }}>
@@ -45,7 +42,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
               {[
                 { label: 'Orden', value: order.id.slice(0, 8).toUpperCase() },
-                { label: 'Protocolo', value: (order.plans as any)?.title ?? '—' },
+                { label: 'Protocolo', value: order.plan_title ?? '—' },
                 { label: 'Paciente', value: order.patient_name ?? '—' },
                 { label: 'Total pagado', value: formatCLP(order.total ?? 0) },
                 { label: 'Fecha', value: order.paid_at ? formatDate(order.paid_at) : formatDate(new Date().toISOString()) },

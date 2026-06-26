@@ -3,10 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 import { getFlowPaymentStatus } from '@/lib/flow';
 import { sendOrderConfirmation } from '@/lib/email';
 
-function serviceRole() {
+// Anon client — process_flow_webhook RPC corre con SECURITY DEFINER
+function anonClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 }
@@ -18,58 +19,31 @@ export async function POST(req: NextRequest) {
     if (!token) return NextResponse.json({ error: 'missing token' }, { status: 400 });
 
     const flowStatus = await getFlowPaymentStatus(token);
-    const supabase = serviceRole();
+    const supabase = anonClient();
 
-    const { data: payment } = await supabase
-      .from('payments')
-      .select('id, order_id, amount')
-      .eq('provider_payment_id', token)
-      .single();
+    const { data: result, error } = await supabase.rpc('process_flow_webhook', {
+      p_flow_token: token,
+      p_flow_status: flowStatus.status,
+      p_raw_webhook: { flow_order: flowStatus.flowOrder, media: flowStatus.paymentData?.media },
+    });
 
-    if (!payment) return NextResponse.json({ error: 'payment not found' }, { status: 404 });
+    if (error || !result) {
+      console.error('process_flow_webhook error:', error);
+      return NextResponse.json({ error: 'webhook processing failed' }, { status: 500 });
+    }
 
-    const paid = flowStatus.status === 2;
-    const rejected = flowStatus.status === 3 || flowStatus.status === 4;
+    if (result.error === 'payment_not_found') {
+      return NextResponse.json({ error: 'payment not found' }, { status: 404 });
+    }
 
-    const newStatus = paid ? 'paid' : rejected ? 'failed' : 'pending';
-
-    await supabase
-      .from('payments')
-      .update({
-        status: newStatus,
-        raw_webhook: flowStatus,
-        metadata: { flow_order: flowStatus.flowOrder, media: flowStatus.paymentData?.media },
-      })
-      .eq('id', payment.id);
-
-    if (paid) {
-      const { data: order } = await supabase
-        .from('orders')
-        .update({ status: 'paid', paid_at: new Date().toISOString() })
-        .eq('id', payment.order_id)
-        .select('id, patient_email, patient_name, total, plan_id')
-        .single();
-
-      if (order) {
-        await supabase
-          .from('plans')
-          .update({ status: 'purchased' })
-          .eq('id', order.plan_id);
-
-        if (order.patient_email) {
-          await sendOrderConfirmation({
-            to: order.patient_email,
-            patientName: order.patient_name ?? 'Paciente',
-            orderTotal: order.total,
-            orderId: order.id,
-          });
-        }
-      }
-    } else if (rejected) {
-      await supabase
-        .from('orders')
-        .update({ status: 'failed' })
-        .eq('id', payment.order_id);
+    // Enviar email de confirmación si el pago fue exitoso
+    if (result.paid && result.patient_email) {
+      await sendOrderConfirmation({
+        to: result.patient_email,
+        patientName: result.patient_name ?? 'Paciente',
+        orderTotal: result.total,
+        orderId: result.order_id,
+      });
     }
 
     return NextResponse.json({ ok: true });

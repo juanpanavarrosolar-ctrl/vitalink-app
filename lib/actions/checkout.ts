@@ -3,10 +3,11 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { createFlowPayment } from '@/lib/flow';
 
-function serviceRole() {
+// Anon client — RPCs con SECURITY DEFINER manejan el acceso a la DB
+function anonClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 }
@@ -23,95 +24,48 @@ interface CheckoutInput {
 }
 
 export async function initiateCheckout(input: CheckoutInput) {
-  const supabase = serviceRole();
+  const supabase = anonClient();
 
-  const { data: plan, error } = await supabase
-    .from('plans')
-    .select(`
-      id, title, status, professional_id, patient_id,
-      professionals ( discount_mode, discount_value ),
-      plan_items (
-        id, quantity,
-        products ( id, name, price )
-      )
-    `)
-    .eq('id', input.planId)
-    .eq('public_token', input.planToken)
-    .single();
+  // Crear orden via RPC con SECURITY DEFINER (bypassa RLS)
+  const { data: orderResult, error: orderErr } = await supabase.rpc('create_order_from_plan', {
+    p_plan_id: input.planId,
+    p_plan_token: input.planToken,
+    p_patient_name: input.name,
+    p_patient_email: input.email,
+    p_phone: input.phone ?? null,
+    p_address: input.address,
+    p_city: input.city,
+    p_region: input.region,
+  });
 
-  if (error || !plan) throw new Error('Protocolo no encontrado o no disponible.');
-  if (['draft', 'cancelled', 'expired', 'purchased'].includes(plan.status)) {
-    throw new Error('Este protocolo no está disponible para compra.');
+  if (orderErr || !orderResult) {
+    throw new Error('Error creando la orden. Intenta nuevamente.');
   }
 
-  const professional = plan.professionals as any;
-  const items = (plan.plan_items ?? []) as any[];
+  if (orderResult.error) {
+    throw new Error(orderResult.error);
+  }
 
-  const subtotal = items.reduce((s: number, i: any) => s + (i.products?.price ?? 0) * (i.quantity ?? 1), 0);
-  const commissionPct = professional?.discount_mode === 'percentage'
-    ? (professional.discount_value ?? 15)
-    : 15;
-  const commissionAmt = Math.round(subtotal * commissionPct / 100);
-  const total = subtotal + commissionAmt;
+  const { order_id, total } = orderResult as { order_id: string; total: number };
 
-  const { data: order, error: orderErr } = await supabase
-    .from('orders')
-    .insert({
-      plan_id: plan.id,
-      professional_id: plan.professional_id,
-      patient_id: (plan as any).patient_id,
-      status: 'pending_payment',
-      subtotal,
-      commission_pct: commissionPct,
-      commission_amt: commissionAmt,
-      total,
-      patient_name: input.name,
-      patient_email: input.email,
-      shipping_address: {
-        address: input.address,
-        city: input.city,
-        region: input.region,
-        phone: input.phone,
-      },
-    })
-    .select('id')
-    .single();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://nutrilink-app-psi.vercel.app';
 
-  if (orderErr || !order) throw new Error('Error creando la orden. Intenta nuevamente.');
-
-  await supabase.from('order_items').insert(
-    items.map((i: any) => ({
-      order_id: order.id,
-      product_id: i.products?.id,
-      quantity: i.quantity ?? 1,
-      unit_price: i.products?.price ?? 0,
-      total_price: (i.products?.price ?? 0) * (i.quantity ?? 1),
-    }))
-  );
-
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
   const flowPayment = await createFlowPayment({
-    commerceOrder: order.id,
-    subject: plan.title,
+    commerceOrder: order_id,
+    subject: 'Plan NutriLink',
     amount: total,
     email: input.email,
     urlConfirmation: `${appUrl}/api/payments/flow-webhook`,
-    urlReturn: `${appUrl}/checkout/success?order=${order.id}`,
+    urlReturn: `${appUrl}/checkout/success?order=${order_id}`,
   });
 
-  await supabase
-    .from('orders')
-    .update({ flow_order_id: String(flowPayment.flowOrder), flow_payment_url: flowPayment.url })
-    .eq('id', order.id);
-
-  await supabase.from('payments').insert({
-    order_id: order.id,
-    provider: 'flow',
-    provider_payment_id: flowPayment.token,
-    status: 'pending',
-    amount: total,
-    currency: 'CLP',
-    metadata: { flow_order: flowPayment.flowOrder, token: flowPayment.token },
+  // Registrar datos del pago Flow (SECURITY DEFINER RPC)
+  await supabase.rpc('register_flow_payment', {
+    p_order_id: order_id,
+    p_flow_order_id: String(flowPayment.flowOrder),
+    p_flow_payment_url: flowPayment.url,
+    p_flow_token: flowPayment.token,
+    p_amount: total,
   });
 
   redirect(flowPayment.url);

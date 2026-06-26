@@ -7,17 +7,18 @@ import { CheckoutButton } from '@/components/patient/checkout-button';
 import { NutriGuiaWidget } from '@/components/ai/nutriguia-widget';
 import { formatCLP } from '@/lib/utils';
 
-function serviceRole() {
+// Anon client — RLS policies allow anon to read public plans
+function anonClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 }
 
 export default async function PatientProtocolPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const supabase = serviceRole();
+  const supabase = anonClient();
 
   const { data: plan } = await supabase
     .from('plans')
