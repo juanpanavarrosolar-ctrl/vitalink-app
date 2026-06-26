@@ -96,7 +96,7 @@ export default function LandingPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 'auto' }}>
               <Link
-                href="/login?role=professional"
+                href="/login?role=professional&mode=login"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   padding: '11px 20px', borderRadius: 'var(--radius-md)',
@@ -108,7 +108,7 @@ export default function LandingPage() {
                 Iniciar sesión
               </Link>
               <Link
-                href="/register?role=professional"
+                href="/login?role=professional&mode=register"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   padding: '11px 20px', borderRadius: 'var(--radius-md)',
@@ -181,7 +181,7 @@ export default function LandingPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 'auto' }}>
               <Link
-                href="/login?role=patient"
+                href="/login?role=patient&mode=login"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   padding: '11px 20px', borderRadius: 'var(--radius-md)',
@@ -193,7 +193,7 @@ export default function LandingPage() {
                 Iniciar sesión
               </Link>
               <Link
-                href="/register?role=patient"
+                href="/login?role=patient&mode=register"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   padding: '11px 20px', borderRadius: 'var(--radius-md)',
@@ -203,7 +203,7 @@ export default function LandingPage() {
                 }}
               >
                 <Icon name="user-plus" size={15} style={{ color: 'var(--emerald-600, #059669)' }} />
-                Crear cuenta
+                Crear cuenta gratis
               </Link>
             </div>
           </div>
