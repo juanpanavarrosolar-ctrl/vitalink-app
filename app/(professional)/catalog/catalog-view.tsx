@@ -1,9 +1,30 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/ui/icon';
 import { formatCLP } from '@/lib/utils';
 import type { BadgeColor } from '@/lib/types';
+
+// Unsplash images mapped by compound keyword
+const COMPOUND_IMAGES: { pattern: RegExp; url: string }[] = [
+  { pattern: /omega.?3|dha|epa/i, url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&auto=format&fit=crop&q=80' },
+  { pattern: /vitamina.?d|vitamin.?d|d3/i, url: 'https://images.unsplash.com/photo-1616671276441-2f2c277b8bf6?w=200&auto=format&fit=crop&q=80' },
+  { pattern: /magnesio|magnesium/i, url: 'https://images.unsplash.com/photo-1550572017-4fcdbb59cc32?w=200&auto=format&fit=crop&q=80' },
+  { pattern: /zinc/i, url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&auto=format&fit=crop&q=80' },
+  { pattern: /vitamina.?c|vitamin.?c|ascorbico/i, url: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=200&auto=format&fit=crop&q=80' },
+  { pattern: /probiótico|probiotic|lactobacillus/i, url: 'https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=200&auto=format&fit=crop&q=80' },
+  { pattern: /colágeno|collagen/i, url: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=200&auto=format&fit=crop&q=80' },
+  { pattern: /hierro|iron|ferroso/i, url: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&auto=format&fit=crop&q=80' },
+];
+const DEFAULT_PRODUCT_IMG = 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&auto=format&fit=crop&q=80';
+
+function getProductImage(compound: string): string {
+  for (const { pattern, url } of COMPOUND_IMAGES) {
+    if (pattern.test(compound)) return url;
+  }
+  return DEFAULT_PRODUCT_IMG;
+}
 
 type Product = {
   id: string;
@@ -90,9 +111,30 @@ export function CatalogView({ products }: CatalogViewProps) {
               style={{
                 background: 'var(--color-surface)', borderRadius: 'var(--radius-lg)',
                 border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-sm)',
-                padding: 'var(--sp-5)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)',
+                overflow: 'hidden', display: 'flex', flexDirection: 'column',
               }}
             >
+              {/* Product image strip */}
+              <div style={{ position: 'relative', height: 120, overflow: 'hidden', background: 'var(--slate-100)' }}>
+                <Image
+                  src={getProductImage(product.compound)}
+                  alt={product.name}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(180deg, transparent 40%, rgba(15,23,42,0.45) 100%)',
+                }} />
+                <div style={{ position: 'absolute', bottom: 8, left: 10 }}>
+                  <Badge color={CLAIM_COLOR[product.claim_review_status] ?? 'slate'}>
+                    {CLAIM_LABEL[product.claim_review_status] ?? product.claim_review_status}
+                  </Badge>
+                </div>
+              </div>
+
+              <div style={{ padding: 'var(--sp-4)', display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700, marginBottom: 2 }}>{product.name}</div>
@@ -100,23 +142,11 @@ export function CatalogView({ products }: CatalogViewProps) {
                     {product.compound}{product.dosage ? ` · ${product.dosage}` : ''}
                   </div>
                 </div>
-                <div style={{
-                  width: 36, height: 36, borderRadius: 'var(--radius-md)',
-                  background: 'var(--color-primary-light)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                }}>
-                  <Icon name="capsule" size={18} style={{ color: 'var(--color-primary)' }} />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                <Badge color={CLAIM_COLOR[product.claim_review_status] ?? 'slate'}>
-                  {CLAIM_LABEL[product.claim_review_status] ?? product.claim_review_status}
-                </Badge>
                 {product.format && (
                   <Badge color="blue">{product.format}</Badge>
                 )}
               </div>
+
 
               {product.description_safe && (
                 <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', lineHeight: 1.5, WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -133,6 +163,7 @@ export function CatalogView({ products }: CatalogViewProps) {
                   <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-success)', fontWeight: 600 }}>En stock</div>
                   <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>{product.brand}</div>
                 </div>
+              </div>
               </div>
             </div>
           ))}
