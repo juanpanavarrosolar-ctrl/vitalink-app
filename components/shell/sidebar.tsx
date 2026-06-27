@@ -57,7 +57,7 @@ export function Sidebar({ professional }: SidebarProps) {
           </div>
           <div>
             <div style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>NutriLink</div>
-            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--sidebar-text)' }}>MVP v1.0</div>
+            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--sidebar-text)' }}>Panel profesional</div>
           </div>
         </div>
       </div>
