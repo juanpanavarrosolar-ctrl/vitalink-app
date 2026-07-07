@@ -3,36 +3,6 @@ import { useState, useEffect, Suspense, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
-/* ─── RUT helpers ────────────────────────────────────────────
-   Valida y formatea RUT chileno (ej: 12.345.678-9)
-   Acepta dígito verificador 0-9 y K
-──────────────────────────────────────────────────────────── */
-function cleanRut(raw: string) {
-  return raw.replace(/[^0-9kK]/g, '').toUpperCase();
-}
-function formatRut(raw: string): string {
-  const clean = cleanRut(raw);
-  if (clean.length < 2) return clean;
-  const body = clean.slice(0, -1);
-  const dv   = clean.slice(-1);
-  const formatted = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  return `${formatted}-${dv}`;
-}
-function validateRut(raw: string): boolean {
-  const clean = cleanRut(raw);
-  if (clean.length < 7) return false;
-  const body = clean.slice(0, -1);
-  const dvInput = clean.slice(-1).toUpperCase();
-  let sum = 0, mul = 2;
-  for (let i = body.length - 1; i >= 0; i--) {
-    sum += parseInt(body[i]) * mul;
-    mul = mul === 7 ? 2 : mul + 1;
-  }
-  const mod = 11 - (sum % 11);
-  const dvCalc = mod === 11 ? '0' : mod === 10 ? 'K' : String(mod);
-  return dvInput === dvCalc;
-}
-
 /* ─── Design tokens ─────────────────────────────────────── */
 const GREEN = '#10B981';
 const GREEN_DARK = '#059669';
@@ -128,9 +98,8 @@ function AuthForm() {
   const [name, setName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
+  const [regConfirm, setRegConfirm] = useState('');
   const [specialty, setSpecialty] = useState('');
-  const [licenseNumber, setLicenseNumber] = useState('');
-  const [licenseError, setLicenseError] = useState('');
 
   useEffect(() => {
     if (roleParam === 'patient' || roleParam === 'professional') { setRole(roleParam); setStep('form'); }
@@ -155,7 +124,7 @@ function AuthForm() {
     setLoading(true); setError('');
     const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setError('Email o contraseña incorrectos.'); setLoading(false); return; }
+    if (error) { setError('Correo o contraseña incorrectos'); setLoading(false); return; }
     const userRole = data.user?.user_metadata?.role;
     const dest = userRole === 'admin' ? '/admin/dashboard' : userRole === 'patient' ? '/patient/dashboard' : '/dashboard';
     router.push(dest);
@@ -175,34 +144,33 @@ function AuthForm() {
   }
 
   function handleRegister() {
-    if (!name.trim() || !regEmail || !regPassword) { setError('Completa todos los campos obligatorios'); return; }
-    if (regPassword.length < 8) { setError('La contraseña debe tener al menos 8 caracteres'); return; }
-    // Validar RUT si fue ingresado
-    if (licenseNumber.trim()) {
-      if (!validateRut(licenseNumber)) {
-        setLicenseError('RUT inválido. Verifica el formato (ej: 12.345.678-9)');
-        return;
-      }
-    } else {
-      setLicenseError('El RUT o N° de matrícula es obligatorio para verificar tu cuenta');
-      return;
-    }
+    if (!name.trim()) { setError('El nombre es obligatorio'); return; }
+    if (!specialty.trim()) { setError('La especialidad es obligatoria'); return; }
+    if (!regEmail.trim()) { setError('El correo es obligatorio'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) { setError('Correo no valido'); return; }
+    if (!regPassword) { setError('La contrasena es obligatoria'); return; }
+    if (regPassword.length < 6) { setError('Minimo 6 caracteres'); return; }
+    if (regPassword !== regConfirm) { setError('Las contrasenas no coinciden'); return; }
     startTransition(async () => {
       const supabase = createClient();
       const { data: authData, error: signUpErr } = await supabase.auth.signUp({
         email: regEmail, password: regPassword,
-        options: { data: { role: 'professional', full_name: name } },
+        options: { data: { role: 'professional', name } },
       });
-      if (signUpErr || !authData.user) { setError(signUpErr?.message ?? 'Error al crear la cuenta'); return; }
+      if (signUpErr) {
+        setError(signUpErr.message.includes('already registered') || signUpErr.message.includes('already been registered')
+          ? 'Este correo ya esta registrado'
+          : (signUpErr.message ?? 'Error al crear la cuenta'));
+        return;
+      }
+      if (!authData.user) { setError('Error al crear la cuenta'); return; }
       await supabase.from('professionals').insert({
         user_id: authData.user.id,
-        full_name: name.trim(),
-        profession: 'Nutricionista',
-        specialty: specialty.trim() || null,
-        license_number: formatRut(licenseNumber),
-        verification_status: 'pending',
+        name: name.trim(),
+        specialty: specialty.trim(),
+        email: regEmail.trim(),
       });
-      router.replace('/onboarding');
+      router.replace('/dashboard');
     });
   }
 
@@ -471,66 +439,22 @@ function AuthForm() {
           {mode === 'register' && isPro && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <Field
-                label="Nombre completo *"
-                placeholder="Ej: Dra. Carmen Silva"
+                label="Nombre completo"
+                placeholder="Dra. Elena Vargas"
                 value={name}
                 onChange={v => { setName(v); setError(''); }}
               />
-
-              {/* RUT — obligatorio con validación en tiempo real */}
-              <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: GRAY_600, marginBottom: 6 }}>
-                  RUT / N° de matrícula *
-                </label>
-                <input
-                  type="text"
-                  placeholder="Ej: 12.345.678-9"
-                  value={licenseNumber}
-                  onChange={e => {
-                    const formatted = formatRut(e.target.value);
-                    setLicenseNumber(formatted);
-                    setLicenseError('');
-                    setError('');
-                  }}
-                  onBlur={() => {
-                    if (licenseNumber && !validateRut(licenseNumber)) {
-                      setLicenseError('RUT inválido. Verifica el formato (ej: 12.345.678-9)');
-                    }
-                  }}
-                  autoComplete="off"
-                  maxLength={12}
-                  style={{
-                    width: '100%', padding: '11px 14px', borderRadius: 10, boxSizing: 'border-box',
-                    border: `1.5px solid ${licenseError ? '#fca5a5' : GRAY_200}`,
-                    background: licenseError ? '#fef2f2' : '#fff',
-                    color: GRAY_900, fontSize: 14, fontFamily: 'inherit', outline: 'none',
-                  }}
-                />
-                {licenseError && (
-                  <p style={{ fontSize: 11, color: '#b91c1c', marginTop: 5, lineHeight: 1.4 }}>
-                    {licenseError}
-                  </p>
-                )}
-                <p style={{ fontSize: 11, color: GRAY_400, marginTop: 5, lineHeight: 1.4 }}>
-                  Requerido para verificar tu credencial profesional
-                </p>
-              </div>
-
-              <Field label="Especialidad" placeholder="Ej: Nutrición deportiva" value={specialty} onChange={setSpecialty} />
-              <div style={{ height: 1, background: GRAY_100, margin: '2px 0' }} />
-              <Field label="Email profesional *" type="email" placeholder="tu@email.com" value={regEmail} onChange={v => { setRegEmail(v); setError(''); }} />
-              <Field label="Contraseña *" type="password" placeholder="Mínimo 8 caracteres" value={regPassword} onChange={v => { setRegPassword(v); setError(''); }} />
+              <Field label="Especialidad" placeholder="Ej: Nutricion deportiva" value={specialty} onChange={v => { setSpecialty(v); setError(''); }} />
+              <Field label="Email" type="email" placeholder="tu@correo.com" value={regEmail} onChange={v => { setRegEmail(v); setError(''); }} />
+              <Field label="Contrasena" type="password" placeholder="Minimo 6 caracteres" value={regPassword} onChange={v => { setRegPassword(v); setError(''); }} />
+              <Field label="Confirmar contrasena" type="password" placeholder="Repite tu contrasena" value={regConfirm} onChange={v => { setRegConfirm(v); setError(''); }} />
 
               {error && <ErrorBox msg={error} />}
 
-              <SubmitBtn busy={busy} isPro label="Crear cuenta gratuita" onClick={handleRegister} />
+              <SubmitBtn busy={busy} isPro label="Crear cuenta" onClick={handleRegister} />
 
               <p style={{ fontSize: 11, color: GRAY_400, textAlign: 'center', lineHeight: 1.5 }}>
-                Al registrarte aceptas nuestros{' '}
-                <a href="/terms" style={{ color: GREEN, fontWeight: 600 }}>Términos de Servicio</a>
-                {' '}y{' '}
-                <a href="/privacy" style={{ color: GREEN, fontWeight: 600 }}>Política de Privacidad</a>
-                {' '}conforme a la ley 19.628 (Chile)
+                Al crear una cuenta aceptas usar NutriLink para emitir recomendaciones profesionales de apoyo nutricional, no tratamientos medicos.
               </p>
             </div>
           )}
