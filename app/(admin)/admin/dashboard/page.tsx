@@ -36,7 +36,7 @@ export default function AdminDashboardPage() {
       {/* Header */}
       <div style={{ marginBottom: 'var(--sp-8)', animation: 'fadeInDown var(--duration-enter) var(--ease-out) both' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 4 }}>Panel de Administración</h1>
-        <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>Resumen de la plataforma NutriLink</p>
+        <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>Resumen de la plataforma VitaLink</p>
       </div>
 
       {/* Stats */}
