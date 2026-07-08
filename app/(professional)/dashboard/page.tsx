@@ -111,7 +111,7 @@ export default async function DashboardPage() {
         </h1>
         <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)' }}>
           {isNewUser
-            ? 'Bienvenido a NutriLink. Crea tu primer protocolo para comenzar.'
+            ? 'Bienvenido a VitaLink. Crea tu primer protocolo para comenzar.'
             : `Tienes ${sentPlans.length} protocolo${sentPlans.length !== 1 ? 's' : ''} enviado${sentPlans.length !== 1 ? 's' : ''} y ${patientCount} paciente${patientCount !== 1 ? 's' : ''}.`}
         </p>
       </div>
