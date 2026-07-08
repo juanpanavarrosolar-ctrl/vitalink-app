@@ -10,9 +10,9 @@ const STATS = [
 ];
 
 const PROFESSIONALS = [
-  { name: 'Dra. María Torres', email: 'demo@nutrilink.cl', specialty: 'Nutricionista Clínica', patients: PATIENTS.length, status: 'verified', since: '1 Ene 2025' },
-  { name: 'Dra. Carmen Silva', email: 'nutri@nutrilink.cl', specialty: 'Nutrición Deportiva', patients: 1, status: 'verified', since: '12 Jun 2026' },
-  { name: 'Administrador', email: 'admin@nutrilink.cl', specialty: '—', patients: 0, status: 'admin', since: '12 Jun 2026' },
+  { name: 'Dra. María Torres', email: 'demo@vitalink.cl', specialty: 'Nutricionista Clínica', patients: PATIENTS.length, status: 'verified', since: '1 Ene 2025' },
+  { name: 'Dra. Carmen Silva', email: 'nutri@vitalink.cl', specialty: 'Nutrición Deportiva', patients: 1, status: 'verified', since: '12 Jun 2026' },
+  { name: 'Administrador', email: 'admin@vitalink.cl', specialty: '—', patients: 0, status: 'admin', since: '12 Jun 2026' },
 ];
 
 const STATUS_MAP: Record<string, { label: string; color: 'emerald' | 'violet' | 'amber' }> = {
