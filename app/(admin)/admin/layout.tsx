@@ -71,7 +71,7 @@ function AdminSidebar() {
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Administrador</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>admin@nutrilink.cl</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>admin@vitalink.cl</div>
           </div>
           <button onClick={handleLogout} title="Cerrar sesión"
             style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', padding: 4, borderRadius: 6, display: 'flex', alignItems: 'center', flexShrink: 0 }}>
