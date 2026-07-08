@@ -45,7 +45,7 @@ export default async function PatientDashboardPage() {
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
           {hasOrders
             ? 'Aquí puedes ver tus protocolos y el estado de tus pedidos.'
-            : 'Tu nutricionista te enviará un link con tu protocolo personalizado para comenzar.'}
+            : 'Tu profesional de salud te enviará un link con tu protocolo personalizado para comenzar.'}
         </p>
       </div>
 
@@ -151,7 +151,7 @@ export default async function PatientDashboardPage() {
             Aún no tienes protocolos
           </h2>
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', lineHeight: 1.6, maxWidth: 360, margin: '0 auto var(--sp-6)' }}>
-            Tu nutricionista te enviará un link con tu protocolo personalizado. Una vez que lo recibas, podrás comprarlo directamente desde aquí.
+            Tu profesional de salud te enviará un link con tu protocolo personalizado. Una vez que lo recibas, podrás comprarlo directamente desde aquí.
           </p>
           <div style={{
             background: 'var(--color-primary-light)', borderRadius: 'var(--radius-lg)',
