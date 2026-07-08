@@ -22,7 +22,6 @@ function RegisterForm() {
   const [form, setForm] = useState({
     email: '', password: '', confirmPassword: '',
     full_name: '', profession: '', specialty: '',
-    license_number: '', clinic_name: '',
   });
 
   useEffect(() => {
@@ -73,30 +72,31 @@ function RegisterForm() {
           data: {
             role: role === 'patient' ? 'patient' : 'professional',
             full_name: form.full_name,
+            profession: role === 'professional' ? form.profession : undefined,
+            specialty: role === 'professional' ? (form.specialty.trim() || undefined) : undefined,
           }
         },
       });
 
-      if (signUpErr || !authData.user) {
-        setError(signUpErr?.message ?? 'Error al crear la cuenta');
+      if (signUpErr) {
+        setError(signUpErr.message.includes('already registered') || signUpErr.message.includes('already been registered')
+          ? 'Este correo ya está registrado. Inicia sesión en su lugar.'
+          : signUpErr.message);
+        return;
+      }
+      if (!authData.user) { setError('Error al crear la cuenta'); return; }
+
+      // Supabase devuelve un usuario "existente" sin identidades nuevas cuando
+      // el email ya está registrado (para no filtrar qué correos existen).
+      if (authData.user.identities && authData.user.identities.length === 0) {
+        setError('Este correo ya está registrado. Inicia sesión en su lugar.');
         return;
       }
 
-      if (role === 'professional') {
-        const { error: proErr } = await supabase.from('professionals').insert({
-          user_id: authData.user.id,
-          full_name: form.full_name.trim(),
-          profession: form.profession,
-          specialty: form.specialty.trim() || null,
-          license_number: form.license_number.trim() || null,
-          clinic_name: form.clinic_name.trim() || null,
-          verification_status: 'pending',
-        });
-        if (proErr) { setError(proErr.message); return; }
-        router.replace('/onboarding');
-      } else {
-        router.replace('/patient/dashboard');
-      }
+      // La fila en public.professionals la crea un trigger en el servidor
+      // (a partir de los metadatos de arriba), así funciona aunque el email
+      // requiera confirmación y todavía no exista una sesión activa.
+      router.replace(role === 'professional' ? '/onboarding' : '/patient/dashboard');
     });
   }
 
@@ -252,8 +252,6 @@ function RegisterForm() {
                   {[
                     { key: 'full_name', label: 'Nombre completo *', placeholder: 'Ej: Dra. Carmen Silva' },
                     { key: 'specialty', label: 'Especialidad', placeholder: 'Ej: Nutrición deportiva' },
-                    { key: 'license_number', label: 'Nº colegiatura', placeholder: 'Número de registro' },
-                    { key: 'clinic_name', label: 'Clínica / Consulta', placeholder: 'Nombre de tu consulta (opcional)' },
                   ].map(f => (
                     <div key={f.key}>
                       <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 600, marginBottom: 'var(--sp-2)' }}>{f.label}</label>
@@ -286,8 +284,6 @@ function RegisterForm() {
                   ['Nombre', form.full_name],
                   ['Profesión', form.profession || '—'],
                   ['Especialidad', form.specialty || '—'],
-                  ['Colegiatura', form.license_number || '—'],
-                  ['Consulta', form.clinic_name || '—'],
                 ].map(([k, v]) => (
                   <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: 'var(--sp-2) 0', borderBottom: '1px solid var(--color-border-subtle)' }}>
                     <span style={{ color: 'var(--color-text-secondary)' }}>{k}</span>
