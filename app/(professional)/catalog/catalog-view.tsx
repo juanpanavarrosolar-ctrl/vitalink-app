@@ -100,7 +100,7 @@ export function CatalogView({ products }: CatalogViewProps) {
           <Icon name="package" size={40} style={{ color: 'var(--color-text-tertiary)', margin: '0 auto var(--sp-4)' }} />
           <div style={{ fontWeight: 600 }}>El catálogo está vacío</div>
           <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)', marginTop: 8 }}>
-            El equipo NutriLink está cargando los productos. Vuelve pronto.
+            El equipo VitaLink está cargando los productos. Vuelve pronto.
           </p>
         </div>
       ) : (
