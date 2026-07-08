@@ -56,7 +56,7 @@ export function Sidebar({ professional }: SidebarProps) {
             <Icon name="heart" size={18} style={{ color: '#fff' }} />
           </div>
           <div>
-            <div style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>NutriLink</div>
+            <div style={{ fontSize: 'var(--text-base)', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>VitaLink</div>
             <div style={{ fontSize: 'var(--text-xs)', color: 'var(--sidebar-text)' }}>Panel profesional</div>
           </div>
         </div>

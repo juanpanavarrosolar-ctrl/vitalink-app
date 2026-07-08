@@ -28,7 +28,7 @@ export function PatientTopbar({ displayName, email }: PatientTopbarProps) {
         <div style={{ width: 30, height: 30, borderRadius: 8, background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Icon name="heart" size={17} style={{ color: '#fff' }} aria-hidden="true" />
         </div>
-        <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-0.02em' }}>NutriLink</span>
+        <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-0.02em' }}>VitaLink</span>
         <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-primary)', background: 'var(--color-primary-light)', padding: '2px 8px', borderRadius: 999, letterSpacing: '0.03em' }}>
           Mi Salud
         </span>
