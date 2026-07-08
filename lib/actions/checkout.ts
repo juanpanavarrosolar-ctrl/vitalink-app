@@ -48,7 +48,7 @@ export async function initiateCheckout(input: CheckoutInput) {
 
   const { order_id, total } = orderResult as { order_id: string; total: number };
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://nutrilink-app-psi.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://vitalink-mvp.vercel.app';
 
   const flowPayment = await createFlowPayment({
     commerceOrder: order_id,
