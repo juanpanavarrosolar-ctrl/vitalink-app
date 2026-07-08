@@ -7,6 +7,8 @@ import { Icon } from '@/components/ui/icon';
 
 type Role = 'professional' | 'patient';
 
+const PROFESSIONS = ['Nutricionista', 'Médico', 'Farmacéutico', 'Kinesiólogo', 'Otro profesional de salud'];
+
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,7 +21,7 @@ function RegisterForm() {
 
   const [form, setForm] = useState({
     email: '', password: '', confirmPassword: '',
-    full_name: '', profession: 'Nutricionista', specialty: '',
+    full_name: '', profession: '', specialty: '',
     license_number: '', clinic_name: '',
   });
 
@@ -51,6 +53,7 @@ function RegisterForm() {
     }
     if (step === 2 && role === 'professional') {
       if (!form.full_name.trim()) { setError('El nombre completo es obligatorio'); return; }
+      if (!form.profession) { setError('Selecciona tu profesión'); return; }
     }
     if (step === 2 && role === 'patient') {
       if (!form.full_name.trim()) { setError('Tu nombre es obligatorio'); return; }
@@ -129,7 +132,7 @@ function RegisterForm() {
             <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon name="heart" size={20} style={{ color: '#fff' }} />
             </div>
-            <span style={{ fontSize: 'var(--text-xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>NutriLink</span>
+            <span style={{ fontSize: 'var(--text-xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>VitaLink</span>
           </div>
           <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>Crear cuenta</h1>
           {step > 0 && (
@@ -157,13 +160,13 @@ function RegisterForm() {
           {/* PASO 0: Selección de rol */}
           {step === 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <h2 style={{ fontWeight: 700, marginBottom: 4 }}>¿Cómo quieres usar NutriLink?</h2>
+              <h2 style={{ fontWeight: 700, marginBottom: 4 }}>¿Cómo quieres usar VitaLink?</h2>
               {([
                 {
                   key: 'professional' as Role,
                   icon: 'stethoscope',
-                  title: 'Soy Nutricionista / Profesional',
-                  desc: 'Crea protocolos y comparte planes con tus pacientes',
+                  title: 'Soy Profesional de Salud',
+                  desc: 'Nutricionista, médico, farmacéutico y más: crea protocolos y comparte planes con tus pacientes',
                 },
                 {
                   key: 'patient' as Role,
@@ -239,6 +242,13 @@ function RegisterForm() {
               </h2>
               {isProfessional ? (
                 <>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 600, marginBottom: 'var(--sp-2)' }}>Profesión *</label>
+                    <select value={form.profession} onChange={e => set('profession', e.target.value)} style={inputStyle}>
+                      <option value="" disabled>Selecciona tu profesión</option>
+                      {PROFESSIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                  </div>
                   {[
                     { key: 'full_name', label: 'Nombre completo *', placeholder: 'Ej: Dra. Carmen Silva' },
                     { key: 'specialty', label: 'Especialidad', placeholder: 'Ej: Nutrición deportiva' },
@@ -259,7 +269,7 @@ function RegisterForm() {
                   </div>
                   <div style={{ padding: '12px 14px', background: 'var(--color-bg)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-subtle)', fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', lineHeight: 1.6, display: 'flex', gap: 8 }}>
                     <Icon name="info" size={14} style={{ color: 'var(--color-text-tertiary)', flexShrink: 0, marginTop: 1 }} />
-                    Tu nutricionista te enviará un link personalizado con tu plan. Podrás verlo y comprarlo desde ahí.
+                    Tu profesional de salud te enviará un link personalizado con tu plan. Podrás verlo y comprarlo desde ahí.
                   </div>
                 </>
               )}
@@ -274,6 +284,7 @@ function RegisterForm() {
                 {[
                   ['Email', form.email],
                   ['Nombre', form.full_name],
+                  ['Profesión', form.profession || '—'],
                   ['Especialidad', form.specialty || '—'],
                   ['Colegiatura', form.license_number || '—'],
                   ['Consulta', form.clinic_name || '—'],
@@ -285,7 +296,7 @@ function RegisterForm() {
                 ))}
               </div>
               <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-                Al crear tu cuenta aceptas los Términos de Uso de NutriLink. Tu perfil será revisado por el equipo antes de ser verificado.
+                Al crear tu cuenta aceptas los Términos de Uso de VitaLink. Tu perfil será revisado por el equipo antes de ser verificado.
               </p>
             </div>
           )}
@@ -303,7 +314,7 @@ function RegisterForm() {
                 ))}
               </div>
               <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-                Al crear tu cuenta aceptas los Términos de Uso de NutriLink.
+                Al crear tu cuenta aceptas los Términos de Uso de VitaLink.
               </p>
             </div>
           )}
