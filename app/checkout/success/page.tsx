@@ -173,7 +173,7 @@ export default async function CheckoutSuccessPage({
 
         {/* Contacto */}
         <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', lineHeight: 1.6 }}>
-          ¿Tienes dudas? Contacta a tu nutricionista directamente o escríbenos a{' '}
+          ¿Tienes dudas? Contacta a tu profesional de salud directamente o escríbenos a{' '}
           <a
             href="mailto:soporte@nutrilink.cl"
             style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}
