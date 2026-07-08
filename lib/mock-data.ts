@@ -3,7 +3,7 @@ import type { Professional, Product, Patient, Protocol, Alert, TimelineDay, Fina
 export const PROFESSIONAL: Professional = {
   id: 'pro-001', name: 'Dra. María Torres', firstName: 'María',
   specialty: 'Nutricionista Clínica', focus: 'Salud Metabólica Femenina',
-  email: 'maria.torres@nutrilink.cl', phone: '+56 9 8765 4321',
+  email: 'maria.torres@vitalink.cl', phone: '+56 9 8765 4321',
   initials: 'MT', marginMode: 'transfer_to_patient', marginPct: 15,
   verified: true, collegeReg: 'CSN-4521',
 };
