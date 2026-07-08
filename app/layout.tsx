@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
-const BASE_URL = 'https://nutrilink-app-psi.vercel.app';
+const BASE_URL = 'https://vitalink-mvp.vercel.app';
 
 export const metadata: Metadata = {
   title: {
