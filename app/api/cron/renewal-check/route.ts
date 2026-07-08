@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   }
 
   const supabase = anonClient();
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://nutrilink-app-psi.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://vitalink-mvp.vercel.app';
 
   const today = new Date();
   const in7Days = new Date(today);
