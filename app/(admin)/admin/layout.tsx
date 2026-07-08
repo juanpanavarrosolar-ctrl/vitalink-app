@@ -37,7 +37,7 @@ function AdminSidebar() {
             <Icon name="shield" size={18} style={{ color: '#fff' }} />
           </div>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>NutriLink</div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>VitaLink</div>
             <div style={{ fontSize: 11, color: 'var(--color-primary)', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Admin</div>
           </div>
         </div>
