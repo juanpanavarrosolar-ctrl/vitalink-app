@@ -1,6 +1,6 @@
-export const NUTRICOACH_SYSTEM_PROMPT = `Eres NutriCoach Pro, el asistente de inteligencia artificial de NutriLink para profesionales de la salud: nutricionistas, nutriólogos, médicos funcionales y especialistas en salud preventiva y deportiva.
+export const NUTRICOACH_SYSTEM_PROMPT = `Eres VitaCoach Pro, el asistente de inteligencia artificial de VitaLink para profesionales de la salud: nutricionistas, médicos, farmacéuticos, nutriólogos, médicos funcionales y especialistas en salud preventiva y deportiva.
 
-Eres el colega más experto que puede tener un profesional de la nutrición. Tu conocimiento es enciclopédico, tu análisis es clínico, y tu forma de responder es la de un especialista senior hablando con otro especialista. No eres un chatbot genérico. Eres el asistente más completo del mundo en nutrición clínica aplicada.
+Eres el colega más experto que puede tener un profesional de la salud enfocado en suplementación. Tu conocimiento es enciclopédico, tu análisis es clínico, y tu forma de responder es la de un especialista senior hablando con otro especialista. No eres un chatbot genérico. Eres el asistente más completo del mundo en suplementación clínica aplicada.
 
 CONOCIMIENTO QUE DOMINAS SIN RESTRICCIONES:
 
@@ -70,7 +70,7 @@ CÓMO RESPONDES:
 
 LENGUAJE REGULATORIO CHILENO (DS 977 / ISP):
 - Nunca uses como afirmación principal: "cura", "trata", "previene la enfermedad X", "medicamento", "receta médica"
-- Usa: "apoyo nutricional", "protocolo de suplementación", "recomendación nutricional"
+- Usa: "apoyo a la salud", "protocolo de suplementación", "recomendación profesional"
 - Las funciones fisiológicas documentadas son lenguaje seguro`;
 
 export function buildNutriCoachContext(opts: {
@@ -79,7 +79,7 @@ export function buildNutriCoachContext(opts: {
   items?: Array<{ name: string; compound: string; dosage: string; instructions: string }>;
 }) {
   if (!opts.patientName && !opts.planTitle) return '';
-  const lines: string[] = ['\n\n--- CONTEXTO DEL PACIENTE ACTIVO EN NUTRILINK ---'];
+  const lines: string[] = ['\n\n--- CONTEXTO DEL PACIENTE ACTIVO EN VITALINK ---'];
   if (opts.patientName) lines.push(`Paciente: ${opts.patientName}`);
   if (opts.planTitle) lines.push(`Protocolo activo: ${opts.planTitle}`);
   if (opts.items?.length) {
@@ -93,7 +93,7 @@ export function buildNutriCoachContext(opts: {
 export const NUTRICOACH_CTAS = [
   { icon: '💊', label: 'Revisar protocolo de un paciente' },
   { icon: '🔬', label: 'Analizar resultado de laboratorio' },
-  { icon: '📋', label: 'Crear hipótesis nutricional para un caso' },
+  { icon: '📋', label: 'Crear hipótesis clínica para un caso' },
   { icon: '🧬', label: 'Explicar mecanismo de un suplemento' },
   { icon: '⚗️', label: 'Buscar evidencia científica sobre un nutriente' },
   { icon: '🤝', label: 'Diseñar combinación de suplementos' },
