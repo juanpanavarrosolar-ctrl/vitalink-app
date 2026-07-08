@@ -429,7 +429,7 @@ function AuthForm() {
                   fontSize: 12, color: GRAY_400, lineHeight: 1.6,
                 }}>
                   <span style={{ color: GRAY_600, fontWeight: 600 }}>DEV:</span>{' '}
-                  demo@nutrilink.cl · Nutrilink2024!
+                  demo@vitalink.cl · Vitalink2024!
                 </div>
               )}
             </div>
