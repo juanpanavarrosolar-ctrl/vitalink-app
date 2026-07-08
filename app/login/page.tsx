@@ -34,7 +34,7 @@ function Logo() {
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
         </svg>
       </div>
-      <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em', color: GRAY_900 }}>NutriLink</span>
+      <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em', color: GRAY_900 }}>VitaLink</span>
     </div>
   );
 }
@@ -237,7 +237,7 @@ function AuthForm() {
               cta="Ver mi protocolo"
               ctaColor={GRAY_600}
               ctaBg="transparent"
-              note="Necesitas el link que te envió tu nutricionista"
+              note="Necesitas el link que te envió tu profesional de salud"
             />
           </div>
 
@@ -305,7 +305,7 @@ function AuthForm() {
                 {isPro ? 'Acceso profesional' : 'Accede a tu protocolo'}
               </h2>
               <p style={{ fontSize: 12, color: GRAY_400, marginTop: 3 }}>
-                {isPro ? 'Nutricionistas y profesionales de la salud' : 'Pacientes de NutriLink'}
+                {isPro ? 'Profesionales de la salud: nutricionistas, médicos y más' : 'Pacientes de VitaLink'}
               </p>
             </div>
           </div>
@@ -379,7 +379,7 @@ function AuthForm() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <Field
                 label="Email" type="email"
-                placeholder={isPro ? 'nutricionista@email.cl' : 'tu@email.cl'}
+                placeholder={isPro ? 'profesional@email.cl' : 'tu@email.cl'}
                 value={email} onChange={v => { setEmail(v); setError(''); }}
               />
               <div>
@@ -413,7 +413,7 @@ function AuthForm() {
                   display: 'flex', alignItems: 'flex-start', gap: 8,
                 }}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}><circle cx="12" cy="12" r="10" /><path d="M12 8v4M12 16h.01" /></svg>
-                  Tu cuenta fue creada por tu nutricionista. Si no tienes contraseña, pídele el link de tu protocolo — puedes comprarlo sin iniciar sesión.
+                  Tu cuenta fue creada por tu profesional de salud. Si no tienes contraseña, pídele el link de tu protocolo — puedes comprarlo sin iniciar sesión.
                 </div>
               )}
 
@@ -454,7 +454,7 @@ function AuthForm() {
               <SubmitBtn busy={busy} isPro label="Crear cuenta" onClick={handleRegister} />
 
               <p style={{ fontSize: 11, color: GRAY_400, textAlign: 'center', lineHeight: 1.5 }}>
-                Al crear una cuenta aceptas usar NutriLink para emitir recomendaciones profesionales de apoyo nutricional, no tratamientos medicos.
+                Al crear una cuenta aceptas usar VitaLink para emitir recomendaciones profesionales de apoyo a la salud, no tratamientos medicos.
               </p>
             </div>
           )}
