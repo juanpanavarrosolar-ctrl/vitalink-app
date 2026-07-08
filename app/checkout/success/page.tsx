@@ -175,10 +175,10 @@ export default async function CheckoutSuccessPage({
         <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', lineHeight: 1.6 }}>
           ¿Tienes dudas? Contacta a tu profesional de salud directamente o escríbenos a{' '}
           <a
-            href="mailto:soporte@nutrilink.cl"
+            href="mailto:soporte@vitalink.cl"
             style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}
           >
-            soporte@nutrilink.cl
+            soporte@vitalink.cl
           </a>
         </p>
       </div>
