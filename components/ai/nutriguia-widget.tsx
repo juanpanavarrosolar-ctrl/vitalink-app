@@ -10,7 +10,7 @@ interface NutriGuiaWidgetProps {
 export function NutriGuiaWidget({ planToken }: NutriGuiaWidgetProps) {
   return (
     <ChatWidget
-      agentName="NutriGuía"
+      agentName="VitaGuía"
       agentEmoji="🌿"
       tagline="Tu guía de bienestar personalizado"
       endpoint="/api/chat/nutriguia"

@@ -11,9 +11,9 @@ interface NutriCoachWidgetProps {
 export function NutriCoachWidget({ patientId, planId }: NutriCoachWidgetProps) {
   return (
     <ChatWidget
-      agentName="NutriCoach Pro"
+      agentName="VitaCoach Pro"
       agentEmoji="🧬"
-      tagline="Tu asistente clínico de nutrición"
+      tagline="Tu asistente clínico de suplementación"
       endpoint="/api/chat/nutricoach"
       ctas={NUTRICOACH_CTAS}
       extraBody={{ patientId, planId }}
