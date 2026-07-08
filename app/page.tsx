@@ -17,7 +17,7 @@ const FEATURES = [
   {
     icon: 'shield',
     title: 'Confianza y seguridad',
-    desc: 'Plataforma profesional con aviso claro de apoyo nutricional, nunca tratamiento médico.',
+    desc: 'Plataforma profesional con aviso claro de apoyo a la salud, nunca tratamiento médico.',
   },
   {
     icon: 'trendUp',
@@ -50,7 +50,7 @@ function Logo({ light = false }: { light?: boolean }) {
       }}>
         <Icon name="heart" size={18} style={{ color: '#fff' }} />
       </div>
-      <span style={{ fontSize: 'var(--text-lg)', fontWeight: 800, letterSpacing: '-0.03em', color: light ? '#fff' : 'var(--color-text)' }}>NutriLink</span>
+      <span style={{ fontSize: 'var(--text-lg)', fontWeight: 800, letterSpacing: '-0.03em', color: light ? '#fff' : 'var(--color-text)' }}>VitaLink</span>
     </div>
   );
 }
@@ -147,7 +147,7 @@ export default function LandingPage() {
             </h1>
 
             <p style={{ marginTop: 20, maxWidth: 480, fontSize: 'var(--text-lg)', lineHeight: 1.65, color: 'var(--color-text-secondary)' }}>
-              NutriLink conecta a nutricionistas con sus pacientes mediante planes de apoyo nutricional personalizados. Crea, comparte y gestiona protocolos con total transparencia.
+              VitaLink conecta a profesionales de la salud —nutricionistas, médicos, farmacéuticos y más— con sus pacientes mediante planes de suplementación personalizados. Crea, comparte y gestiona protocolos con total transparencia.
             </p>
 
             <div style={{ marginTop: 32, display: 'flex', flexWrap: 'wrap', gap: 12 }}>
@@ -233,7 +233,7 @@ export default function LandingPage() {
             Todo lo que necesitas para tu práctica profesional
           </h2>
           <p style={{ marginTop: 12, fontSize: 'var(--text-lg)', color: 'var(--color-text-secondary)' }}>
-            Una plataforma diseñada para nutricionistas que valoran la calidad y la transparencia.
+            Una plataforma diseñada para profesionales de la salud que valoran la calidad y la transparencia.
           </p>
         </div>
 
@@ -296,7 +296,7 @@ export default function LandingPage() {
             Empieza a crear protocolos hoy
           </h2>
           <p style={{ margin: '12px auto 0', maxWidth: 480, fontSize: 'var(--text-lg)', color: 'rgba(255,255,255,0.8)' }}>
-            Únete a más de 120 profesionales que ya gestionan su apoyo nutricional con NutriLink.
+            Únete a más de 120 profesionales que ya gestionan su apoyo a la salud con VitaLink.
           </p>
           <div style={{ marginTop: 32, display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 12 }}>
             <Link href="/login?role=professional&mode=register" style={{
@@ -325,7 +325,7 @@ export default function LandingPage() {
             <div>
               <Logo />
               <p style={{ marginTop: 12, maxWidth: 320, fontSize: 'var(--text-xs)', lineHeight: 1.6, color: 'var(--color-text-secondary)' }}>
-                Plataforma de protocolos de suplementación para profesionales de la salud. Apoyo nutricional transparente.
+                Plataforma de protocolos de suplementación para profesionales de la salud. Apoyo a la salud transparente.
               </p>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '10px 24px', fontSize: 'var(--text-sm)' }}>
@@ -338,7 +338,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div style={{ marginTop: 32, borderTop: '1px solid var(--color-border-subtle)', paddingTop: 24, textAlign: 'center', fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)' }}>
-            © 2026 NutriLink. Los suplementos alimentarios no sustituyen una alimentación variada y equilibrada.
+            © 2026 VitaLink. Los suplementos alimentarios no sustituyen una alimentación variada y equilibrada.
           </div>
         </div>
       </footer>
