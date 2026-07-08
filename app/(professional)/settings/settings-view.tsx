@@ -164,7 +164,7 @@ export function SettingsView({ email, professional }: SettingsViewProps) {
           )}
         </div>
         <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-tertiary)', marginTop: 8, lineHeight: 1.5 }}>
-          Las comisiones son transparentes hacia los pacientes, en cumplimiento con los principios éticos de NutriLink y la normativa DS 977.
+          Las comisiones son transparentes hacia los pacientes, en cumplimiento con los principios éticos de VitaLink y la normativa DS 977.
         </p>
       </div>
     </div>
