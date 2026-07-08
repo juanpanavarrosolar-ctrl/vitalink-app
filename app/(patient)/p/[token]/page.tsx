@@ -61,7 +61,7 @@ export default async function PatientProtocolPage({ params }: { params: Promise<
               <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Icon name="heart" size={20} style={{ color: '#fff' }} />
               </div>
-              <span style={{ fontSize: 'var(--text-xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>NutriLink</span>
+              <span style={{ fontSize: 'var(--text-xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>VitaLink</span>
             </div>
             <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 8 }}>
               {plan.title}
@@ -87,7 +87,7 @@ export default async function PatientProtocolPage({ params }: { params: Promise<
               <div>
                 <div style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>{professional.full_name}</div>
                 <div style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)' }}>
-                  {professional.specialty ?? 'Profesional de salud'} · Verificado por NutriLink
+                  {professional.specialty ?? 'Profesional de salud'} · Verificado por VitaLink
                 </div>
               </div>
               <Badge color="emerald" style={{ marginLeft: 'auto' }}>Verificado</Badge>
