@@ -42,7 +42,7 @@ export default function OnboardingPage() {
             <div style={{ width: 36, height: 36, borderRadius: 'var(--radius-md)', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon name="heart" size={20} style={{ color: '#fff' }} />
             </div>
-            <span style={{ fontSize: 'var(--text-xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>NutriLink</span>
+            <span style={{ fontSize: 'var(--text-xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>VitaLink</span>
           </div>
           <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 800, letterSpacing: '-0.02em' }}>
             {allDone ? '¡Todo listo! 🎉' : 'Primeros pasos'}
@@ -50,7 +50,7 @@ export default function OnboardingPage() {
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)', marginTop: 4 }}>
             {allDone
               ? 'Tu cuenta está configurada. Comienza a crear protocolos.'
-              : 'Completa estos pasos para aprovechar NutriLink al máximo.'}
+              : 'Completa estos pasos para aprovechar VitaLink al máximo.'}
           </p>
         </div>
 
