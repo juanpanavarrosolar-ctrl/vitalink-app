@@ -52,7 +52,7 @@ export async function initiateCheckout(input: CheckoutInput) {
 
   const flowPayment = await createFlowPayment({
     commerceOrder: order_id,
-    subject: 'Plan NutriLink',
+    subject: 'Plan VitaLink',
     amount: total,
     email: input.email,
     urlConfirmation: `${appUrl}/api/payments/flow-webhook`,

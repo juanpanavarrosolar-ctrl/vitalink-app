@@ -115,7 +115,7 @@ export async function publishProtocol(planId: string) {
     await sendProtocolLink({
       to: patient.email,
       patientName: patient.name ?? 'Paciente',
-      professionalName: pro?.full_name ?? 'Tu nutricionista',
+      professionalName: pro?.full_name ?? 'Tu profesional de salud',
       protocolName: plan.title,
       link: `${appUrl}/p/${plan.public_token}`,
     });
