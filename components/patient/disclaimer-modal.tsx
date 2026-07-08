@@ -53,7 +53,7 @@ export function DisclaimerModal() {
           Los suplementos comercializados a través de esta plataforma cuentan con autorización sanitaria del ISP Chile.
           Los beneficios descritos corresponden a información nutricional general y no constituyen una afirmación de propiedades
           terapéuticas o medicinales. El uso de suplementos debe complementar una alimentación equilibrada y un estilo de vida saludable.
-          NutriLink no reemplaza la consulta con un profesional de salud calificado.
+          VitaLink no reemplaza la consulta con un profesional de salud calificado.
         </div>
 
         <button
