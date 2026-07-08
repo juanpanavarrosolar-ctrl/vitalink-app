@@ -65,7 +65,7 @@ export default async function PatientProtocolPage({ params }: { params: Promise<
   const verified = professional?.verification_status === 'verified';
   const expiresLabel = formatDate(plan.expires_at);
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://nutrilink-app-psi.vercel.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://vitalink-mvp.vercel.app';
   const shareUrl = `${appUrl}/p/${token}`;
 
   return (
